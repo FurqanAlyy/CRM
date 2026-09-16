@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Plus, Search, MoreHorizontal, Users } from "lucide-react"
+import AddContactModal from "@/components/contacts/AddContactModal"
 
 interface Contact {
   _id: string
@@ -22,6 +23,7 @@ export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     fetchContacts()
@@ -66,7 +68,10 @@ export default function ContactsPage() {
           </p>
         </div>
 
-        <button className="flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-zinc-200">
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-zinc-200"
+        >
           <Plus className="h-4 w-4" />
           Add Contact
         </button>
@@ -197,6 +202,13 @@ export default function ContactsPage() {
           </div>
         )}
       </div>
+
+      {showModal && (
+        <AddContactModal
+          onClose={() => setShowModal(false)}
+          onCreated={fetchContacts}
+        />
+      )}
     </div>
   )
 }
