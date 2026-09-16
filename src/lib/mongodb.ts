@@ -6,6 +6,8 @@ if (!MONGODB_URI) {
   throw new Error("Please define MONGODB_URI in .env.local")
 }
 
+const mongoUri: string = MONGODB_URI
+
 interface MongooseCache {
   conn: typeof mongoose | null
   promise: Promise<typeof mongoose> | null
@@ -28,7 +30,7 @@ export async function connectDB() {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI)
+    cached.promise = mongoose.connect(mongoUri)
   }
 
   cached.conn = await cached.promise
