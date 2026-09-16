@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Plus, Search, MoreHorizontal, Users } from "lucide-react"
 import AddContactModal from "@/components/contacts/AddContactModal"
+import EditContactModal from "@/components/contacts/EditContactModal"
 
 interface Contact {
   _id: string
@@ -20,6 +21,7 @@ interface Contact {
 }
 
 export default function ContactsPage() {
+  const [editingContact, setEditingContact] = useState<Contact | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
@@ -191,9 +193,43 @@ export default function ContactsPage() {
                     </td>
 
                     <td className="px-6 py-4 text-right">
-                      <button className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-800 hover:text-white">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </button>
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => setEditingContact(contact)}
+                          className="rounded-lg px-3 py-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={async () => {
+                            const confirmed = window.confirm(
+                              `Delete ${contact.firstName} ${contact.lastName}?`
+                            )
+
+                            if (!confirmed) return
+
+                            const response = await fetch(
+                              `/api/contacts?id=${contact._id}`,
+                              {
+                                method: "DELETE"
+                              }
+                            )
+
+                            const data = await response.json()
+
+                            if (!response.ok) {
+                              window.alert(data.message || "Failed to delete contact")
+                              return
+                            }
+
+                            fetchContacts()
+                          }}
+                          className="rounded-lg px-3 py-2 text-xs text-red-400 hover:bg-red-950/30"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -203,10 +239,11 @@ export default function ContactsPage() {
         )}
       </div>
 
-      {showModal && (
-        <AddContactModal
-          onClose={() => setShowModal(false)}
-          onCreated={fetchContacts}
+      {editingContact && (
+        <EditContactModal
+          contact={editingContact}
+          onClose={() => setEditingContact(null)}
+          onUpdated={fetchContacts}
         />
       )}
     </div>
