@@ -1,7 +1,12 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { useEffect, useState } from "react"
 import { Loader2, X } from "lucide-react"
+
+interface Company {
+  _id: string
+  name: string
+}
 
 interface Contact {
   _id: string
@@ -12,6 +17,10 @@ interface Contact {
   jobTitle?: string
   status: "active" | "inactive"
   notes?: string
+  company?: {
+    _id: string
+    name: string
+  }
 }
 
 interface EditContactModalProps {
@@ -25,12 +34,15 @@ export default function EditContactModal({
   onClose,
   onUpdated
 }: EditContactModalProps) {
+  const [companies, setCompanies] = useState<Company[]>([])
+
   const [form, setForm] = useState({
     firstName: contact.firstName,
     lastName: contact.lastName,
     email: contact.email || "",
     phone: contact.phone || "",
     jobTitle: contact.jobTitle || "",
+    company: contact.company?._id || "",
     status: contact.status,
     notes: contact.notes || ""
   })
@@ -38,8 +50,27 @@ export default function EditContactModal({
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    fetchCompanies()
+  }, [])
+
+  async function fetchCompanies() {
+    try {
+      const response = await fetch("/api/companies")
+      const data = await response.json()
+
+      if (response.ok) {
+        setCompanies(data.companies)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) {
     setForm({
       ...form,
@@ -47,7 +78,9 @@ export default function EditContactModal({
     })
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault()
 
     setError("")
@@ -83,7 +116,7 @@ export default function EditContactModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
         <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
           <div>
             <h2 className="text-lg font-semibold text-white">
@@ -132,6 +165,27 @@ export default function EditContactModal({
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-zinc-300">
+              Company
+            </label>
+
+            <select
+              name="company"
+              value={form.company}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
+            >
+              <option value="">No company</option>
+
+              {companies.map((company) => (
+                <option key={company._id} value={company._id}>
+                  {company.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -226,7 +280,10 @@ export default function EditContactModal({
               disabled={loading}
               className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black hover:bg-zinc-200 disabled:opacity-50"
             >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
+
               {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>

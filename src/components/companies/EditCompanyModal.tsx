@@ -1,51 +1,44 @@
 "use client"
-import { useEffect, useState } from "react"
+
+import { FormEvent, useState } from "react"
 import { Loader2, X } from "lucide-react"
 
 interface Company {
   _id: string
   name: string
+  website?: string
+  industry?: string
+  size?: string
+  phone?: string
+  email?: string
+  address?: string
+  notes?: string
 }
 
-interface AddContactModalProps {
+interface EditCompanyModalProps {
+  company: Company
   onClose: () => void
-  onCreated: () => void
+  onUpdated: () => void
 }
 
-export default function AddContactModal({
+export default function EditCompanyModal({
+  company,
   onClose,
-  onCreated
-}: AddContactModalProps) {
-  const [companies, setCompanies] = useState<Company[]>([])
+  onUpdated
+}: EditCompanyModalProps) {
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    jobTitle: "",
-    company: "",
-    notes: ""
+    name: company.name,
+    website: company.website || "",
+    industry: company.industry || "",
+    size: company.size || "",
+    phone: company.phone || "",
+    email: company.email || "",
+    address: company.address || "",
+    notes: company.notes || ""
   })
 
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    fetchCompanies()
-  }, [])
-
-  async function fetchCompanies() {
-    try {
-      const response = await fetch("/api/companies")
-      const data = await response.json()
-
-      if (response.ok) {
-        setCompanies(data.companies)
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -56,29 +49,32 @@ export default function AddContactModal({
     })
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
     setError("")
     setLoading(true)
 
     try {
-      const response = await fetch("/api/contacts", {
-        method: "POST",
+      const response = await fetch("/api/companies", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify({
+          id: company._id,
+          ...form
+        })
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.message || "Failed to create contact")
+        setError(data.message || "Failed to update company")
         return
       }
 
-      onCreated()
+      onUpdated()
       onClose()
     } catch {
       setError("Something went wrong")
@@ -89,15 +85,15 @@ export default function AddContactModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
         <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
           <div>
             <h2 className="text-lg font-semibold text-white">
-              Add Contact
+              Edit Company
             </h2>
 
             <p className="mt-1 text-sm text-zinc-500">
-              Add a new customer contact
+              Update company information
             </p>
           </div>
 
@@ -110,75 +106,72 @@ export default function AddContactModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 p-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm text-zinc-300">
-                First name
-              </label>
-
-              <input
-                name="firstName"
-                value={form.firstName}
-                onChange={handleChange}
-                required
-                placeholder="John"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm text-zinc-300">
-                Last name
-              </label>
-
-              <input
-                name="lastName"
-                value={form.lastName}
-                onChange={handleChange}
-                required
-                placeholder="Doe"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
-              />
-            </div>
-          </div>
-
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
-              Company
-            </label>
-
-            <select
-              name="company"
-              value={form.company}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
-            >
-              <option value="">No company</option>
-
-              {companies.map((company) => (
-                <option key={company._id} value={company._id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm text-zinc-300">
-              Email
+              Company name
             </label>
 
             <input
-              name="email"
-              type="email"
-              value={form.email}
+              name="name"
+              value={form.name}
               onChange={handleChange}
-              placeholder="john@company.com"
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              required
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
             />
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm text-zinc-300">
+                Website
+              </label>
+
+              <input
+                name="website"
+                value={form.website}
+                onChange={handleChange}
+                placeholder="https://company.com"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm text-zinc-300">
+                Industry
+              </label>
+
+              <input
+                name="industry"
+                value={form.industry}
+                onChange={handleChange}
+                placeholder="Software"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm text-zinc-300">
+                Company size
+              </label>
+
+              <select
+                name="size"
+                value={form.size}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
+              >
+                <option value="">Select size</option>
+                <option value="1-10">1-10 employees</option>
+                <option value="11-50">11-50 employees</option>
+                <option value="51-200">51-200 employees</option>
+                <option value="201-500">201-500 employees</option>
+                <option value="501-1000">501-1000 employees</option>
+                <option value="1000+">1000+ employees</option>
+              </select>
+            </div>
+
             <div>
               <label className="mb-2 block text-sm text-zinc-300">
                 Phone
@@ -192,20 +185,35 @@ export default function AddContactModal({
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
               />
             </div>
+          </div>
 
-            <div>
-              <label className="mb-2 block text-sm text-zinc-300">
-                Job title
-              </label>
+          <div>
+            <label className="mb-2 block text-sm text-zinc-300">
+              Email
+            </label>
 
-              <input
-                name="jobTitle"
-                value={form.jobTitle}
-                onChange={handleChange}
-                placeholder="CTO"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
-              />
-            </div>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="contact@company.com"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm text-zinc-300">
+              Address
+            </label>
+
+            <input
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              placeholder="Lahore, Pakistan"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+            />
           </div>
 
           <div>
@@ -218,7 +226,7 @@ export default function AddContactModal({
               value={form.notes}
               onChange={handleChange}
               rows={3}
-              placeholder="Add notes about this contact..."
+              placeholder="Add notes about this company..."
               className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
             />
           </div>
@@ -247,7 +255,7 @@ export default function AddContactModal({
                 <Loader2 className="h-4 w-4 animate-spin" />
               )}
 
-              {loading ? "Creating..." : "Create Contact"}
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

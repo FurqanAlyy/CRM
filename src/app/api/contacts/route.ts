@@ -3,6 +3,7 @@ import { z } from "zod"
 import { connectDB } from "@/lib/mongodb"
 import { verifyToken } from "@/lib/auth"
 import Contact from "@/models/Contact"
+import Company from "@/models/Company"
 import mongoose from "mongoose"
 
 const contactSchema = z.object({
@@ -36,14 +37,39 @@ async function getUser(request: NextRequest) {
   }
 }
 
+async function validateCompany(
+  companyId: string | undefined,
+  userId: string
+) {
+  if (!companyId) {
+    return true
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(companyId)) {
+    return false
+  }
+
+  const company = await Company.findOne({
+    _id: companyId,
+    owner: userId
+  })
+
+  return !!company
+}
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser(request)
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
+        {
+          success: false,
+          message: "Unauthorized"
+        },
+        {
+          status: 401
+        }
       )
     }
 
@@ -67,7 +93,9 @@ export async function GET(request: NextRequest) {
         success: false,
         message: "Failed to fetch contacts"
       },
-      { status: 500 }
+      {
+        status: 500
+      }
     )
   }
 }
@@ -78,8 +106,13 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
+        {
+          success: false,
+          message: "Unauthorized"
+        },
+        {
+          status: 401
+        }
       )
     }
 
@@ -93,11 +126,30 @@ export async function POST(request: NextRequest) {
           success: false,
           message: "Invalid contact data"
         },
-        { status: 400 }
+        {
+          status: 400
+        }
       )
     }
 
     await connectDB()
+
+    const companyValid = await validateCompany(
+      result.data.company,
+      user.userId
+    )
+
+    if (!companyValid) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid company"
+        },
+        {
+          status: 400
+        }
+      )
+    }
 
     const contact = await Contact.create({
       ...result.data,
@@ -111,7 +163,9 @@ export async function POST(request: NextRequest) {
         message: "Contact created successfully",
         contact
       },
-      { status: 201 }
+      {
+        status: 201
+      }
     )
   } catch (error) {
     console.error(error)
@@ -121,7 +175,9 @@ export async function POST(request: NextRequest) {
         success: false,
         message: "Failed to create contact"
       },
-      { status: 500 }
+      {
+        status: 500
+      }
     )
   }
 }
@@ -132,23 +188,30 @@ export async function PATCH(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
+        {
+          success: false,
+          message: "Unauthorized"
+        },
+        {
+          status: 401
+        }
       )
     }
 
     const body = await request.json()
 
-    const idSchema = z.object({
-      id: z.string()
-    })
-
-    const parsedId = idSchema.safeParse(body)
-
-    if (!parsedId.success || !mongoose.Types.ObjectId.isValid(parsedId.data.id)) {
+    if (
+      !body.id ||
+      !mongoose.Types.ObjectId.isValid(body.id)
+    ) {
       return NextResponse.json(
-        { success: false, message: "Invalid contact ID" },
-        { status: 400 }
+        {
+          success: false,
+          message: "Invalid contact ID"
+        },
+        {
+          status: 400
+        }
       )
     }
 
@@ -156,16 +219,38 @@ export async function PATCH(request: NextRequest) {
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, message: "Invalid contact data" },
-        { status: 400 }
+        {
+          success: false,
+          message: "Invalid contact data"
+        },
+        {
+          status: 400
+        }
       )
     }
 
     await connectDB()
 
+    const companyValid = await validateCompany(
+      result.data.company,
+      user.userId
+    )
+
+    if (!companyValid) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid company"
+        },
+        {
+          status: 400
+        }
+      )
+    }
+
     const contact = await Contact.findOneAndUpdate(
       {
-        _id: parsedId.data.id,
+        _id: body.id,
         owner: user.userId
       },
       {
@@ -179,8 +264,13 @@ export async function PATCH(request: NextRequest) {
 
     if (!contact) {
       return NextResponse.json(
-        { success: false, message: "Contact not found" },
-        { status: 404 }
+        {
+          success: false,
+          message: "Contact not found"
+        },
+        {
+          status: 404
+        }
       )
     }
 
@@ -197,7 +287,9 @@ export async function PATCH(request: NextRequest) {
         success: false,
         message: "Failed to update contact"
       },
-      { status: 500 }
+      {
+        status: 500
+      }
     )
   }
 }
@@ -208,8 +300,13 @@ export async function DELETE(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
+        {
+          success: false,
+          message: "Unauthorized"
+        },
+        {
+          status: 401
+        }
       )
     }
 
@@ -218,8 +315,13 @@ export async function DELETE(request: NextRequest) {
 
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
-        { success: false, message: "Invalid contact ID" },
-        { status: 400 }
+        {
+          success: false,
+          message: "Invalid contact ID"
+        },
+        {
+          status: 400
+        }
       )
     }
 
@@ -232,8 +334,13 @@ export async function DELETE(request: NextRequest) {
 
     if (!contact) {
       return NextResponse.json(
-        { success: false, message: "Contact not found" },
-        { status: 404 }
+        {
+          success: false,
+          message: "Contact not found"
+        },
+        {
+          status: 404
+        }
       )
     }
 
@@ -249,7 +356,9 @@ export async function DELETE(request: NextRequest) {
         success: false,
         message: "Failed to delete contact"
       },
-      { status: 500 }
+      {
+        status: 500
+      }
     )
   }
 }
