@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import AddDealModal from "@/components/deals/AddDealModal"
 import EditDealModal from "@/components/deals/EditDealModal"
+import DealPipeline from "@/components/deals/DealPipeline"
 
 interface Deal {
   _id: string
@@ -52,18 +53,12 @@ const stageLabels = {
 }
 
 const stageStyles = {
-  prospecting:
-    "bg-zinc-800 text-zinc-300",
-  qualification:
-    "bg-blue-950/50 text-blue-400",
-  proposal:
-    "bg-yellow-950/50 text-yellow-400",
-  negotiation:
-    "bg-orange-950/50 text-orange-400",
-  closed_won:
-    "bg-green-950/50 text-green-400",
-  closed_lost:
-    "bg-red-950/50 text-red-400"
+  prospecting: "bg-zinc-800 text-zinc-300",
+  qualification: "bg-blue-950/50 text-blue-400",
+  proposal: "bg-yellow-950/50 text-yellow-400",
+  negotiation: "bg-orange-950/50 text-orange-400",
+  closed_won: "bg-green-950/50 text-green-400",
+  closed_lost: "bg-red-950/50 text-red-400"
 }
 
 export default function DealsPage() {
@@ -71,6 +66,10 @@ export default function DealsPage() {
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+
+  const [view, setView] = useState<"table" | "pipeline">(
+    "table"
+  )
 
   const [showAddModal, setShowAddModal] =
     useState(false)
@@ -131,10 +130,50 @@ export default function DealsPage() {
       }
 
       setDeals((currentDeals) =>
-        currentDeals.filter((deal) => deal._id !== id)
+        currentDeals.filter(
+          (deal) => deal._id !== id
+        )
       )
 
       setOpenMenu(null)
+    } catch {
+      alert("Something went wrong")
+    }
+  }
+
+  async function handleStageChange(
+    dealId: string,
+    stage: Deal["stage"]
+  ) {
+    try {
+      const response = await fetch("/api/deals", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: dealId,
+          stage
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message || "Failed to update deal")
+        return
+      }
+
+      setDeals((currentDeals) =>
+        currentDeals.map((deal) =>
+          deal._id === dealId
+            ? {
+                ...deal,
+                stage
+              }
+            : deal
+        )
+      )
     } catch {
       alert("Something went wrong")
     }
@@ -148,7 +187,6 @@ export default function DealsPage() {
       : ""
 
     const companyName = deal.company?.name || ""
-
     const leadTitle = deal.lead?.title || ""
 
     return (
@@ -208,46 +246,76 @@ export default function DealsPage() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900">
-        <div className="border-b border-zinc-800 p-4">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-md flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
 
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search deals..."
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 py-2.5 pl-10 pr-4 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
-            />
-          </div>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search deals..."
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-950 py-2.5 pl-10 pr-4 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+          />
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-16 text-sm text-zinc-500">
-            Loading deals...
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center py-16 text-sm text-red-400">
-            {error}
-          </div>
-        ) : filteredDeals.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-sm text-zinc-500">
-              {search
-                ? "No deals found"
-                : "No deals yet"}
-            </p>
+        <div className="flex rounded-lg border border-zinc-800 bg-zinc-900 p-1">
+          <button
+            onClick={() => setView("table")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              view === "table"
+                ? "bg-zinc-800 text-white"
+                : "text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            Table
+          </button>
 
-            {!search && (
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="mt-3 text-sm text-white hover:underline"
-              >
-                Create your first deal
-              </button>
-            )}
-          </div>
-        ) : (
+          <button
+            onClick={() => setView("pipeline")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              view === "pipeline"
+                ? "bg-zinc-800 text-white"
+                : "text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            Pipeline
+          </button>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 py-16 text-sm text-zinc-500">
+          Loading deals...
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 py-16 text-sm text-red-400">
+          {error}
+        </div>
+      ) : filteredDeals.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900 py-16">
+          <p className="text-sm text-zinc-500">
+            {search
+              ? "No deals found"
+              : "No deals yet"}
+          </p>
+
+          {!search && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="mt-3 text-sm text-white hover:underline"
+            >
+              Create your first deal
+            </button>
+          )}
+        </div>
+      ) : view === "pipeline" ? (
+        <DealPipeline
+          deals={filteredDeals}
+          onStageChange={handleStageChange}
+          onEdit={setEditingDeal}
+        />
+      ) : (
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1000px]">
               <thead>
@@ -401,8 +469,8 @@ export default function DealsPage() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {showAddModal && (
         <AddDealModal
