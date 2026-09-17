@@ -13,6 +13,7 @@ import {
   UserPlus
 } from "lucide-react"
 import LeadChart from "@/components/dashboard/LeadChart"
+import DealPipelineChart from "@/components/dashboard/DealPipelineChart"
 
 interface DashboardStats {
   contacts: number
@@ -155,14 +156,6 @@ export default function DashboardPage() {
     return "text-green-400"
   }
 
-  function getPipelineStageName(stage: string) {
-    return stage
-      .replace("_", " ")
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
-      )
-  }
-
   if (loading) {
     return (
       <div className="flex min-h-[500px] items-center justify-center">
@@ -261,7 +254,7 @@ export default function DashboardPage() {
           </p>
 
           <p className="mt-1 text-xs text-zinc-500">
-            {formatCurrency(stats.dealValue)} pipeline value
+            {formatCurrency(stats.weightedDealValue)} weighted value
           </p>
         </div>
 
@@ -295,7 +288,7 @@ export default function DashboardPage() {
               </h2>
 
               <p className="mt-1 text-xs text-zinc-600">
-                Deals grouped by stage
+                Deal value by pipeline stage
               </p>
             </div>
 
@@ -303,71 +296,25 @@ export default function DashboardPage() {
           </div>
 
           <div className="p-5">
-            {dealPipeline.length === 0 ? (
-              <div className="flex h-48 items-center justify-center">
-                <p className="text-sm text-zinc-600">
-                  No deals available
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {dealPipeline.map((stage) => (
-                  <div key={stage._id}>
-                    <div className="mb-2 flex items-center justify-between text-sm">
-                      <span className="text-zinc-400">
-                        {getPipelineStageName(stage._id)}
-                      </span>
-
-                      <span className="text-zinc-500">
-                        {stage.count}{" "}
-                        {stage.count === 1
-                          ? "deal"
-                          : "deals"}
-                      </span>
-                    </div>
-
-                    <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
-                      <div
-                        className="h-full rounded-full bg-zinc-400"
-                        style={{
-                          width: `${Math.min(
-                            stage.value /
-                              Math.max(
-                                stats.dealValue,
-                                1
-                              ) *
-                              100,
-                            100
-                          )}%`
-                        }}
-                      />
-                    </div>
-
-                    <p className="mt-1 text-xs text-zinc-600">
-                      {formatCurrency(stage.value)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+            <DealPipelineChart data={dealPipeline} />
           </div>
         </div>
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-900">
-  <div className="border-b border-zinc-800 px-5 py-4">
-    <h2 className="font-medium text-white">
-      Lead Overview
-    </h2>
+          <div className="border-b border-zinc-800 px-5 py-4">
+            <h2 className="font-medium text-white">
+              Lead Overview
+            </h2>
 
-    <p className="mt-1 text-xs text-zinc-600">
-      Current lead distribution
-    </p>
-  </div>
+            <p className="mt-1 text-xs text-zinc-600">
+              Current lead distribution
+            </p>
+          </div>
 
-  <div className="p-5">
-    <LeadChart data={leadStats} />
-  </div>
-</div>
+          <div className="p-5">
+            <LeadChart data={leadStats} />
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
