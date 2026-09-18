@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import mongoose from "mongoose"
 import { verifyToken } from "@/lib/auth"
 import { connectDB } from "@/lib/mongodb"
 import User from "@/models/User"
@@ -24,7 +25,10 @@ export async function GET(request: NextRequest) {
   try {
     const currentUser = await getUser(request)
 
-    if (!currentUser) {
+    if (
+      !currentUser ||
+      !mongoose.Types.ObjectId.isValid(currentUser.userId)
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -36,13 +40,23 @@ export async function GET(request: NextRequest) {
 
     await connectDB()
 
-    const users = await User.find({})
+    if (currentUser.role === "admin") {
+      const users = await User.find({})
+        .select("_id name email role avatar")
+        .sort({ name: 1 })
+
+      return NextResponse.json({
+        success: true,
+        users
+      })
+    }
+
+    const user = await User.findById(currentUser.userId)
       .select("_id name email role avatar")
-      .sort({ name: 1 })
 
     return NextResponse.json({
       success: true,
-      users
+      users: user ? [user] : []
     })
   } catch (error) {
     console.error(error)
