@@ -9,7 +9,7 @@ if (!AUTH_SECRET) {
 
 const secret = new TextEncoder().encode(AUTH_SECRET)
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value
 
   if (!token) {
