@@ -7,13 +7,13 @@ export default function CRMLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-[#11131b]">
       <Sidebar />
 
       <Navbar />
 
-      <main className="ml-64 pt-16">
-        <div className="p-6">
+      <main className="lg:ml-64 pt-16">
+        <div className="p-4 sm:p-5 lg:p-6">
           {children}
         </div>
       </main>

@@ -258,12 +258,12 @@ export default function Navbar() {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-zinc-800 bg-zinc-950 px-6">
+    <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center border-b border-[#282a32] bg-[#0c0e16]/95 px-4 backdrop-blur lg:left-64 lg:px-6">
       <div
         ref={searchRef}
         className="relative w-full max-w-md"
       >
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#555966]" />
 
         <input
           type="text"
@@ -272,7 +272,7 @@ export default function Navbar() {
             setQuery(event.target.value)
           }
           placeholder="Search contacts, companies, leads..."
-          className="h-10 w-full rounded-lg border border-zinc-800 bg-zinc-900 pl-10 pr-10 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-700"
+          className="h-10 w-full rounded-xl border border-[#282a32] bg-[#191b24] pl-10 pr-10 text-sm text-white outline-none transition placeholder:text-[#555966] focus:border-[#4b5262] focus:bg-[#1d1f28]"
         />
 
         {query && (
@@ -281,20 +281,20 @@ export default function Navbar() {
               setQuery("")
               setResults([])
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-300"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555966] transition hover:text-[#c4c7d0]"
           >
             <X className="h-4 w-4" />
           </button>
         )}
 
         {query && (
-          <div className="absolute left-0 right-0 top-12 z-50 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl">
+          <div className="absolute left-0 right-0 top-12 z-50 overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24] shadow-2xl">
             {loading ? (
-              <div className="px-4 py-4 text-sm text-zinc-500">
+              <div className="px-4 py-4 text-sm text-[#777b89]">
                 Searching...
               </div>
             ) : results.length === 0 ? (
-              <div className="px-4 py-4 text-sm text-zinc-500">
+              <div className="px-4 py-4 text-sm text-[#777b89]">
                 No results found
               </div>
             ) : (
@@ -305,18 +305,18 @@ export default function Navbar() {
                     onClick={() =>
                       handleResultClick(result)
                     }
-                    className="flex w-full items-center gap-3 border-b border-zinc-800 px-4 py-3 text-left last:border-b-0 hover:bg-zinc-800"
+                    className="flex w-full items-center gap-3 border-b border-[#282a32] px-4 py-3 text-left last:border-b-0 hover:bg-[#282a32]"
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-zinc-800 text-zinc-400">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#282a32] text-[#8c909f]">
                       {getIcon(result.type)}
                     </div>
 
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-zinc-200">
+                      <p className="truncate text-sm font-medium text-[#e7e8ec]">
                         {result.title}
                       </p>
 
-                      <p className="mt-0.5 truncate text-xs capitalize text-zinc-600">
+                      <p className="mt-0.5 truncate text-xs capitalize text-[#777b89]">
                         {result.type} ·{" "}
                         {result.subtitle}
                       </p>
@@ -329,7 +329,7 @@ export default function Navbar() {
         )}
       </div>
 
-      <div className="ml-6 flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-4">
         <div
           ref={notificationRef}
           className="relative"
@@ -340,12 +340,12 @@ export default function Navbar() {
                 (current) => !current
               )
             }
-            className="relative text-zinc-500 hover:text-zinc-300"
+            className="relative rounded-lg p-2 text-[#777b89] transition hover:bg-[#191b24] hover:text-[#d8dbe5]"
           >
             <Bell className="h-5 w-5" />
 
             {unreadCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-zinc-200 px-1 text-[10px] font-medium text-zinc-900">
+              <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#adc6ff] px-1 text-[10px] font-semibold text-[#11131b]">
                 {unreadCount > 9
                   ? "9+"
                   : unreadCount}
@@ -354,14 +354,14 @@ export default function Navbar() {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-10 z-50 w-80 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
+            <div className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24] shadow-2xl">
+              <div className="flex items-center justify-between border-b border-[#282a32] px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium text-zinc-200">
+                  <p className="text-sm font-medium text-[#e7e8ec]">
                     Notifications
                   </p>
 
-                  <p className="mt-0.5 text-xs text-zinc-600">
+                  <p className="mt-0.5 text-xs text-[#777b89]">
                     {unreadCount} unread
                   </p>
                 </div>
@@ -369,7 +369,7 @@ export default function Navbar() {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
-                    className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300"
+                    className="flex items-center gap-1.5 text-xs text-[#8c909f] hover:text-white"
                   >
                     <Check className="h-3.5 w-3.5" />
                     Mark all read
@@ -380,7 +380,7 @@ export default function Navbar() {
               <div className="max-h-96 overflow-y-auto">
                 {notifications.length === 0 ? (
                   <div className="flex h-32 items-center justify-center">
-                    <p className="text-sm text-zinc-600">
+                    <p className="text-sm text-[#777b89]">
                       No notifications
                     </p>
                   </div>
@@ -394,33 +394,33 @@ export default function Navbar() {
                             notification
                           )
                         }
-                        className={`w-full border-b border-zinc-800 px-4 py-3 text-left last:border-b-0 hover:bg-zinc-800 ${
+                        className={`w-full border-b border-[#282a32] px-4 py-3 text-left last:border-b-0 hover:bg-[#282a32] ${
                           !notification.read
-                            ? "bg-zinc-800/40"
+                            ? "bg-[#adc6ff]/5"
                             : ""
                         }`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-zinc-400">
+                          <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#555966]">
                             {!notification.read && (
-                              <span className="block h-2 w-2 rounded-full bg-zinc-200" />
+                              <span className="block h-2 w-2 rounded-full bg-[#adc6ff]" />
                             )}
                           </div>
 
                           <div className="min-w-0">
                             <div className="flex items-start justify-between gap-3">
-                              <p className="text-sm font-medium text-zinc-300">
+                              <p className="text-sm font-medium text-[#d8dbe5]">
                                 {notification.title}
                               </p>
 
-                              <span className="shrink-0 text-[10px] text-zinc-600">
+                              <span className="shrink-0 text-[10px] text-[#555966]">
                                 {formatNotificationDate(
                                   notification.createdAt
                                 )}
                               </span>
                             </div>
 
-                            <p className="mt-1 text-xs leading-5 text-zinc-500">
+                            <p className="mt-1 text-xs leading-5 text-[#777b89]">
                               {notification.message}
                             </p>
                           </div>
@@ -434,17 +434,17 @@ export default function Navbar() {
           )}
         </div>
 
-        <div className="flex items-center gap-3 border-l border-zinc-800 pl-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-300">
+        <div className="flex items-center gap-3 border-l border-[#282a32] pl-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#adc6ff] text-xs font-semibold text-[#11131b]">
             FA
           </div>
 
-          <div className="hidden sm:block">
-            <p className="text-sm font-medium text-zinc-300">
+          <div className="hidden xl:block">
+            <p className="text-sm font-medium text-[#d8dbe5]">
               Furqan Ali
             </p>
 
-            <p className="text-xs text-zinc-600">
+            <p className="text-xs text-[#777b89]">
               Sales Representative
             </p>
           </div>

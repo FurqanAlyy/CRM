@@ -33,16 +33,22 @@ export default function DealPipelineChart({
 
   if (chartData.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-zinc-600">
-          No deal data available
-        </p>
+      <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-[#282a32] bg-[#11131b]">
+        <div className="text-center">
+          <p className="text-sm font-medium text-[#8c909f]">
+            No deal data available
+          </p>
+
+          <p className="mt-1 text-xs text-[#555966]">
+            Deal pipeline data will appear here
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="h-64 w-full">
+    <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
@@ -55,36 +61,48 @@ export default function DealPipelineChart({
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="#27272a"
+            stroke="#282a32"
+            vertical={false}
           />
 
           <XAxis
             dataKey="stage"
             tick={{
-              fill: "#71717a",
+              fill: "#777b89",
               fontSize: 11
             }}
             axisLine={false}
             tickLine={false}
+            tickMargin={10}
           />
 
           <YAxis
             tick={{
-              fill: "#71717a",
-              fontSize: 11
+              fill: "#777b89",
+              fontSize: 10
             }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(value) =>
-              `$${value.toLocaleString()}`
+              `$${Number(value).toLocaleString()}`
             }
+            width={65}
           />
 
           <Tooltip
+            cursor={{
+              fill: "rgba(173, 198, 255, 0.04)"
+            }}
             contentStyle={{
-              backgroundColor: "#18181b",
-              border: "1px solid #27272a",
-              borderRadius: "8px"
+              backgroundColor: "#191b24",
+              border: "1px solid #3b3e49",
+              borderRadius: "10px",
+              color: "#fff",
+              boxShadow: "0 12px 30px rgba(0,0,0,0.25)"
+            }}
+            labelStyle={{
+              color: "#e7e8ec",
+              marginBottom: "4px"
             }}
             formatter={(value) => [
               `$${Number(value).toLocaleString()}`,
@@ -94,8 +112,9 @@ export default function DealPipelineChart({
 
           <Bar
             dataKey="value"
-            radius={[5, 5, 0, 0]}
-            fill="#a1a1aa"
+            radius={[6, 6, 0, 0]}
+            fill="#adc6ff"
+            maxBarSize={42}
           />
         </BarChart>
       </ResponsiveContainer>

@@ -27,7 +27,9 @@ export default function AddCompanyModal({
   const [loading, setLoading] = useState(false)
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) {
     setForm({
       ...form,
@@ -67,27 +69,32 @@ export default function AddCompanyModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
-          <div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 sm:p-4">
+      <div className="flex max-h-[calc(100vh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl sm:max-h-[90vh]">
+        <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 px-4 py-4 sm:px-6">
+          <div className="min-w-0">
             <h2 className="text-lg font-semibold text-white">
               Add Company
             </h2>
+
             <p className="mt-1 text-sm text-zinc-500">
               Add a new company to your CRM
             </p>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-800 hover:text-white"
+            className="ml-4 shrink-0 rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-800 hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 p-6">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5 overflow-y-auto p-4 sm:p-6"
+        >
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
               Company name
@@ -99,7 +106,7 @@ export default function AddCompanyModal({
               onChange={handleChange}
               required
               placeholder="Acme Inc."
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
             />
           </div>
 
@@ -114,7 +121,7 @@ export default function AddCompanyModal({
                 value={form.website}
                 onChange={handleChange}
                 placeholder="https://acme.com"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
               />
             </div>
 
@@ -128,7 +135,7 @@ export default function AddCompanyModal({
                 value={form.industry}
                 onChange={handleChange}
                 placeholder="Software"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
               />
             </div>
           </div>
@@ -143,7 +150,7 @@ export default function AddCompanyModal({
                 name="size"
                 value={form.size}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none focus:border-zinc-500"
               >
                 <option value="">Select size</option>
                 <option value="1-10">1-10 employees</option>
@@ -165,7 +172,7 @@ export default function AddCompanyModal({
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="+92 300 1234567"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
               />
             </div>
           </div>
@@ -181,7 +188,7 @@ export default function AddCompanyModal({
               value={form.email}
               onChange={handleChange}
               placeholder="contact@acme.com"
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
             />
           </div>
 
@@ -195,7 +202,7 @@ export default function AddCompanyModal({
               value={form.address}
               onChange={handleChange}
               placeholder="Lahore, Pakistan"
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
             />
           </div>
 
@@ -210,7 +217,7 @@ export default function AddCompanyModal({
               onChange={handleChange}
               rows={3}
               placeholder="Add notes about this company..."
-              className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-500"
             />
           </div>
 
@@ -220,11 +227,11 @@ export default function AddCompanyModal({
             </div>
           )}
 
-          <div className="flex justify-end gap-3 border-t border-zinc-800 pt-5">
+          <div className="flex flex-col-reverse gap-2 border-t border-zinc-800 pt-5 sm:flex-row sm:justify-end sm:gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 hover:bg-zinc-800"
+              className="w-full rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-zinc-800 sm:w-auto"
             >
               Cancel
             </button>
@@ -232,7 +239,7 @@ export default function AddCompanyModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {loading && (
                 <Loader2 className="h-4 w-4 animate-spin" />
