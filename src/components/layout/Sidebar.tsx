@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -12,7 +13,8 @@ import {
   Settings,
   Sparkles,
   Target,
-  Users
+  Users,
+  X
 } from "lucide-react"
 
 const navigation = [
@@ -50,28 +52,41 @@ const navigation = [
     name: "Activities",
     href: "/activities",
     icon: Activity
-  },
-  {
-    name: "Reports",
-    href: "/reports",
-    icon: BarChart3
-  },
-  {
-    name: "AI Assistant",
-    href: "/ai",
-    icon: Sparkles
   }
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+  open: boolean
+  onClose: () => void
+}
+
+export default function Sidebar({
+  open,
+  onClose
+}: SidebarProps) {
   const pathname = usePathname()
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[#282a32] bg-[#0c0e16] lg:flex">
-        <div className="flex h-16 items-center border-b border-[#282a32] px-6">
+      {open && (
+        <button
+          aria-label="Close sidebar"
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] lg:hidden"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-[#282a32] bg-[#0c0e16] transition-transform duration-300 ease-in-out lg:z-40 lg:w-64 lg:translate-x-0 ${
+          open
+            ? "translate-x-0"
+            : "-translate-x-full"
+        }`}
+      >
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#282a32] px-6">
           <Link
             href="/dashboard"
+            onClick={onClose}
             className="flex items-center gap-2"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#adc6ff]">
@@ -84,6 +99,14 @@ export default function Sidebar() {
               CRM
             </span>
           </Link>
+
+          <button
+            onClick={onClose}
+            aria-label="Close sidebar"
+            className="rounded-lg p-2 text-[#777b89] transition hover:bg-[#191b24] hover:text-white lg:hidden"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-5">
@@ -92,7 +115,7 @@ export default function Sidebar() {
           </p>
 
           <div className="space-y-1">
-            {navigation.slice(0, 7).map((item) => {
+            {navigation.map((item) => {
               const Icon = item.icon
               const active = pathname === item.href
 
@@ -100,6 +123,7 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={onClose}
                   className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                     active
                       ? "bg-[#adc6ff]/10 text-[#adc6ff]"
@@ -130,14 +154,26 @@ export default function Sidebar() {
 
           <Link
             href="/reports"
+            onClick={onClose}
             className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
               pathname === "/reports"
                 ? "bg-[#adc6ff]/10 text-[#adc6ff]"
                 : "text-[#8c909f] hover:bg-[#191b24] hover:text-white"
             }`}
           >
-            <BarChart3 className="h-[18px] w-[18px] text-[#777b89] group-hover:text-[#bfc2cc]" />
-            Reports
+            <BarChart3
+              className={`h-[18px] w-[18px] ${
+                pathname === "/reports"
+                  ? "text-[#adc6ff]"
+                  : "text-[#777b89] group-hover:text-[#bfc2cc]"
+              }`}
+            />
+
+            <span>Reports</span>
+
+            {pathname === "/reports" && (
+              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#adc6ff]" />
+            )}
           </Link>
 
           <p className="mb-3 mt-7 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#555966]">
@@ -146,13 +182,20 @@ export default function Sidebar() {
 
           <Link
             href="/ai"
+            onClick={onClose}
             className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
               pathname === "/ai"
                 ? "bg-[#adc6ff]/10 text-[#adc6ff]"
                 : "text-[#8c909f] hover:bg-[#191b24] hover:text-white"
             }`}
           >
-            <Sparkles className="h-[18px] w-[18px] text-[#4edea3] group-hover:text-[#4edea3]" />
+            <Sparkles
+              className={`h-[18px] w-[18px] ${
+                pathname === "/ai"
+                  ? "text-[#adc6ff]"
+                  : "text-[#4edea3]"
+              }`}
+            />
 
             <span>AI Assistant</span>
 
@@ -162,9 +205,10 @@ export default function Sidebar() {
           </Link>
         </nav>
 
-        <div className="border-t border-[#282a32] p-3">
+        <div className="shrink-0 border-t border-[#282a32] p-3">
           <Link
             href="/settings"
+            onClick={onClose}
             className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
               pathname === "/settings"
                 ? "bg-[#adc6ff]/10 text-[#adc6ff]"
@@ -176,30 +220,6 @@ export default function Sidebar() {
           </Link>
         </div>
       </aside>
-
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#282a32] bg-[#0c0e16]/95 backdrop-blur lg:hidden">
-        <nav className="flex h-16 items-center justify-around overflow-x-auto px-2">
-          {navigation.slice(0, 5).map((item) => {
-            const Icon = item.icon
-            const active = pathname === item.href
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex min-w-[64px] flex-col items-center justify-center gap-1 text-[10px] font-medium ${
-                  active
-                    ? "text-[#adc6ff]"
-                    : "text-[#777b89]"
-                }`}
-              >
-                <Icon className="h-[18px] w-[18px]" />
-                <span>{item.name}</span>
-              </Link>
-            )
-          })}
-        </nav>
-      </div>
     </>
   )
 }

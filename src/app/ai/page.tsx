@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useState } from "react"
@@ -9,7 +10,6 @@ import {
   Mail,
   RefreshCw,
   Sparkles,
-  User,
   Users
 } from "lucide-react"
 
@@ -178,36 +178,55 @@ export default function AIAssistantPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
-            <Sparkles className="h-5 w-5 text-zinc-300" />
-          </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#adc6ff]/10">
+              <Sparkles className="h-5 w-5 text-[#adc6ff]" />
+            </div>
 
-          <div>
-            <h1 className="text-2xl font-semibold text-white">
+            <h1 className="text-2xl font-semibold tracking-tight text-[#e2e1ed]">
               AI Assistant
             </h1>
 
-            <p className="mt-1 text-sm text-zinc-500">
-              Use your CRM data to get AI-powered sales assistance
-            </p>
+            <span className="rounded-full border border-[#4edea3]/20 bg-[#4edea3]/10 px-2.5 py-1 text-xs font-medium text-[#4edea3]">
+              AI Powered
+            </span>
           </div>
+
+          <p className="mt-2 text-sm text-[#8c909f]">
+            Use your CRM data to get AI-powered sales assistance
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-[#8c909f]">
+          <div className="h-2 w-2 rounded-full bg-[#4edea3]" />
+          Gemini AI
         </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="space-y-4">
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <Brain className="h-4 w-4 text-zinc-500" />
+        <div className="space-y-6">
+          <div className="overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24]">
+            <div className="border-b border-[#282a32] px-5 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#adc6ff]/10">
+                  <Brain className="h-4 w-4 text-[#adc6ff]" />
+                </div>
 
-              <h2 className="font-medium text-white">
-                AI Actions
-              </h2>
+                <div>
+                  <h2 className="font-medium text-[#e2e1ed]">
+                    AI Actions
+                  </h2>
+
+                  <p className="mt-1 text-xs text-[#8c909f]">
+                    Choose what you want AI to do
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 p-4">
               {actions.map((action) => {
                 const Icon = action.icon
                 const active =
@@ -221,21 +240,41 @@ export default function AIAssistantPage() {
                       setResponse("")
                       setError("")
                     }}
-                    className={`w-full rounded-lg border p-3 text-left transition ${
+                    className={`w-full rounded-xl border p-4 text-left transition ${
                       active
-                        ? "border-zinc-600 bg-zinc-800"
-                        : "border-zinc-800 hover:bg-zinc-800/60"
+                        ? "border-[#adc6ff]/30 bg-[#adc6ff]/10"
+                        : "border-[#282a32] bg-[#11131b] hover:border-[#424754] hover:bg-[#1d1f28]"
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
+                      <div
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                          active
+                            ? "bg-[#adc6ff]/15"
+                            : "bg-[#282a32]"
+                        }`}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${
+                            active
+                              ? "text-[#adc6ff]"
+                              : "text-[#8c909f]"
+                          }`}
+                        />
+                      </div>
 
-                      <div>
-                        <p className="text-sm font-medium text-zinc-200">
-                          {action.title}
-                        </p>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-[#e2e1ed]">
+                            {action.title}
+                          </p>
 
-                        <p className="mt-1 text-xs leading-5 text-zinc-600">
+                          {active && (
+                            <div className="h-1.5 w-1.5 rounded-full bg-[#adc6ff]" />
+                          )}
+                        </div>
+
+                        <p className="mt-1 text-xs leading-5 text-[#8c909f]">
                           {action.description}
                         </p>
                       </div>
@@ -246,116 +285,132 @@ export default function AIAssistantPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-            <h2 className="font-medium text-white">
-              Select Record
-            </h2>
+          <div className="overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24]">
+            <div className="border-b border-[#282a32] px-5 py-4">
+              <h2 className="font-medium text-[#e2e1ed]">
+                Select Record
+              </h2>
 
-            <p className="mt-1 text-xs text-zinc-600">
-              Choose the CRM record the AI should analyze.
-            </p>
-
-            {activeType === "deal_insight" ? (
-              <div className="mt-4">
-                <label className="mb-2 block text-xs text-zinc-500">
-                  Deal
-                </label>
-
-                <select
-                  value={selectedDeal}
-                  onChange={(event) =>
-                    setSelectedDeal(event.target.value)
-                  }
-                  className="h-10 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-sm text-zinc-300 outline-none focus:border-zinc-700"
-                >
-                  <option value="">
-                    Select a deal
-                  </option>
-
-                  {deals.map((deal) => (
-                    <option
-                      key={deal._id}
-                      value={deal._id}
-                    >
-                      {deal.title} — $
-                      {deal.amount.toLocaleString()}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <div className="mt-4">
-                <label className="mb-2 block text-xs text-zinc-500">
-                  Contact
-                </label>
-
-                <select
-                  value={selectedContact}
-                  onChange={(event) =>
-                    setSelectedContact(
-                      event.target.value
-                    )
-                  }
-                  className="h-10 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-sm text-zinc-300 outline-none focus:border-zinc-700"
-                >
-                  <option value="">
-                    Select a contact
-                  </option>
-
-                  {contacts.map((contact) => (
-                    <option
-                      key={contact._id}
-                      value={contact._id}
-                    >
-                      {contact.firstName}{" "}
-                      {contact.lastName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {error && (
-              <p className="mt-3 text-xs text-red-400">
-                {error}
+              <p className="mt-1 text-xs text-[#8c909f]">
+                Choose the CRM record the AI should analyze.
               </p>
-            )}
+            </div>
 
-            <button
-              onClick={generateAI}
-              disabled={loading}
-              className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-zinc-200 text-sm font-medium text-zinc-900 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Sparkles className="h-4 w-4" />
+            <div className="p-5">
+              {activeType === "deal_insight" ? (
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-[#c2c6d6]">
+                    Deal
+                  </label>
 
-              {loading
-                ? "Generating..."
-                : "Generate with AI"}
-            </button>
+                  <select
+                    value={selectedDeal}
+                    onChange={(event) =>
+                      setSelectedDeal(event.target.value)
+                    }
+                    className="h-11 w-full rounded-lg border border-[#424754] bg-[#11131b] px-3 text-sm text-[#e2e1ed] outline-none transition focus:border-[#adc6ff] focus:ring-1 focus:ring-[#adc6ff]/20"
+                  >
+                    <option value="">
+                      Select a deal
+                    </option>
+
+                    {deals.map((deal) => (
+                      <option
+                        key={deal._id}
+                        value={deal._id}
+                      >
+                        {deal.title} — $
+                        {deal.amount.toLocaleString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-[#c2c6d6]">
+                    Contact
+                  </label>
+
+                  <select
+                    value={selectedContact}
+                    onChange={(event) =>
+                      setSelectedContact(
+                        event.target.value
+                      )
+                    }
+                    className="h-11 w-full rounded-lg border border-[#424754] bg-[#11131b] px-3 text-sm text-[#e2e1ed] outline-none transition focus:border-[#adc6ff] focus:ring-1 focus:ring-[#adc6ff]/20"
+                  >
+                    <option value="">
+                      Select a contact
+                    </option>
+
+                    {contacts.map((contact) => (
+                      <option
+                        key={contact._id}
+                        value={contact._id}
+                      >
+                        {contact.firstName}{" "}
+                        {contact.lastName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {error && (
+                <div className="mt-3 rounded-lg border border-[#ffb4ab]/20 bg-[#ffb4ab]/10 px-3 py-2">
+                  <p className="text-xs text-[#ffb4ab]">
+                    {error}
+                  </p>
+                </div>
+              )}
+
+              <button
+                onClick={generateAI}
+                disabled={loading}
+                className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#4d8eff] px-4 text-sm font-medium text-white transition hover:bg-[#5c98ff] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Sparkles
+                  className={`h-4 w-4 ${
+                    loading ? "animate-pulse" : ""
+                  }`}
+                />
+
+                {loading
+                  ? "Generating..."
+                  : "Generate with AI"}
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="xl:col-span-2">
-          <div className="min-h-[620px] rounded-xl border border-zinc-800 bg-zinc-900">
-            <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
-              <div>
-                <h2 className="font-medium text-white">
-                  AI Response
-                </h2>
+          <div className="overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24]">
+            <div className="flex flex-col gap-3 border-b border-[#282a32] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#adc6ff]/10">
+                  <Sparkles className="h-4 w-4 text-[#adc6ff]" />
+                </div>
 
-                <p className="mt-1 text-xs text-zinc-600">
-                  Generated from your CRM data
-                </p>
+                <div>
+                  <h2 className="font-medium text-[#e2e1ed]">
+                    AI Response
+                  </h2>
+
+                  <p className="mt-1 text-xs text-[#8c909f]">
+                    Generated from your CRM data
+                  </p>
+                </div>
               </div>
 
               {response && (
                 <button
                   onClick={copyResponse}
-                  className="flex items-center gap-2 rounded-lg border border-zinc-800 px-3 py-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#424754] bg-[#282a32] px-3 py-2 text-xs text-[#c2c6d6] transition hover:bg-[#33343d] hover:text-[#e2e1ed] sm:w-auto"
                 >
                   {copied ? (
                     <>
-                      <Check className="h-3.5 w-3.5" />
+                      <Check className="h-3.5 w-3.5 text-[#4edea3]" />
                       Copied
                     </>
                   ) : (
@@ -368,34 +423,62 @@ export default function AIAssistantPage() {
               )}
             </div>
 
-            <div className="p-6">
+            <div className="p-5 sm:p-6">
               {!response && !loading ? (
-                <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-800">
-                    <Sparkles className="h-6 w-6 text-zinc-500" />
+                <div className="flex min-h-[500px] flex-col items-center justify-center px-4 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#424754] bg-[#282a32]">
+                    <Sparkles className="h-7 w-7 text-[#adc6ff]" />
                   </div>
 
-                  <h3 className="mt-4 text-sm font-medium text-zinc-300">
+                  <h3 className="mt-5 text-sm font-medium text-[#e2e1ed]">
                     AI assistance is ready
                   </h3>
 
-                  <p className="mt-2 max-w-sm text-xs leading-5 text-zinc-600">
+                  <p className="mt-2 max-w-sm text-xs leading-5 text-[#8c909f]">
                     Select an action and a CRM record, then generate an AI-powered response.
                   </p>
+
+                  <div className="mt-5 flex flex-wrap justify-center gap-2">
+                    <span className="rounded-full border border-[#282a32] bg-[#11131b] px-3 py-1.5 text-[11px] text-[#8c909f]">
+                      Customer summaries
+                    </span>
+
+                    <span className="rounded-full border border-[#282a32] bg-[#11131b] px-3 py-1.5 text-[11px] text-[#8c909f]">
+                      Follow-ups
+                    </span>
+
+                    <span className="rounded-full border border-[#282a32] bg-[#11131b] px-3 py-1.5 text-[11px] text-[#8c909f]">
+                      Deal insights
+                    </span>
+                  </div>
                 </div>
               ) : loading ? (
                 <div className="flex min-h-[500px] flex-col items-center justify-center">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-700">
-                    <Sparkles className="h-4 w-4 animate-pulse text-zinc-400" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#424754] bg-[#282a32]">
+                    <Sparkles className="h-5 w-5 animate-pulse text-[#adc6ff]" />
                   </div>
 
-                  <p className="mt-4 text-sm text-zinc-500">
+                  <p className="mt-4 text-sm text-[#c2c6d6]">
                     Analyzing CRM data...
+                  </p>
+
+                  <p className="mt-1 text-xs text-[#8c909f]">
+                    Generating your AI response
                   </p>
                 </div>
               ) : (
-                <div className="whitespace-pre-wrap text-sm leading-7 text-zinc-300">
-                  {response}
+                <div className="min-h-[500px] rounded-xl border border-[#282a32] bg-[#11131b] p-5 sm:p-6">
+                  <div className="mb-5 flex items-center gap-2 border-b border-[#282a32] pb-4">
+                    <div className="h-2 w-2 rounded-full bg-[#4edea3]" />
+
+                    <span className="text-xs font-medium text-[#8c909f]">
+                      Generated response
+                    </span>
+                  </div>
+
+                  <div className="whitespace-pre-wrap text-sm leading-7 text-[#c2c6d6]">
+                    {response}
+                  </div>
                 </div>
               )}
             </div>

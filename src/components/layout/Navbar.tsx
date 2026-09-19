@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -6,6 +7,7 @@ import {
   Building2,
   BriefcaseBusiness,
   Check,
+  Menu,
   Search,
   User,
   UserPlus,
@@ -30,7 +32,13 @@ interface Notification {
   createdAt: string
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  onMenuClick: () => void
+}
+
+export default function Navbar({
+  onMenuClick
+}: NavbarProps) {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
@@ -258,7 +266,15 @@ export default function Navbar() {
   }
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center border-b border-[#282a32] bg-[#0c0e16]/95 px-4 backdrop-blur lg:left-64 lg:px-6">
+    <header className="fixed left-0 right-0 top-0 z-[60] flex h-16 items-center border-b border-[#282a32] bg-[#0c0e16]/95 px-3 backdrop-blur sm:px-4 lg:left-64 lg:px-6">
+      <button
+        onClick={onMenuClick}
+        aria-label="Open navigation"
+        className="mr-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[#8c909f] transition hover:bg-[#191b24] hover:text-white lg:hidden"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
       <div
         ref={searchRef}
         className="relative w-full max-w-md"
@@ -329,7 +345,7 @@ export default function Navbar() {
         )}
       </div>
 
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-2 sm:gap-4">
         <div
           ref={notificationRef}
           className="relative"
@@ -354,7 +370,7 @@ export default function Navbar() {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24] shadow-2xl">
+            <div className="absolute right-0 top-12 z-50 w-[calc(100vw-1.5rem)] max-w-80 overflow-hidden rounded-xl border border-[#282a32] bg-[#191b24] shadow-2xl">
               <div className="flex items-center justify-between border-b border-[#282a32] px-4 py-3">
                 <div>
                   <p className="text-sm font-medium text-[#e7e8ec]">
@@ -434,8 +450,8 @@ export default function Navbar() {
           )}
         </div>
 
-        <div className="flex items-center gap-3 border-l border-[#282a32] pl-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#adc6ff] text-xs font-semibold text-[#11131b]">
+        <div className="flex items-center gap-3 border-l border-[#282a32] pl-2 sm:pl-4">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#adc6ff] text-xs font-semibold text-[#11131b]">
             FA
           </div>
 
